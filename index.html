@@ -1,27 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>College Smart Event Portal</title>
+<title>Smart Event Management Portal</title>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
 <style>
 body{
   font-family: Arial;
   text-align:center;
   background: linear-gradient(to right,#4facfe,#00f2fe);
+  color:black;
 }
 
-.box{
+.container{
+  width: 80%;
+  margin: auto;
+}
+
+.event-box, .registration-box, .attendance-box, .certificate-box, .data-box{
   background:white;
   padding:25px;
-  margin:60px auto;
-  width:350px;
+  margin: 30px auto;
+  width: 400px;
   border-radius:15px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  text-align:center;
 }
 
 input{
   width:90%;
   padding:8px;
-  margin:8px;
+  margin:8px 0;
 }
 
 button{
@@ -33,93 +43,161 @@ button{
   cursor:pointer;
 }
 
-#attendanceSection,
-#certificateSection{
-  display:none;
-  background:white;
-  margin:40px auto;
-  padding:30px;
-  width:500px;
-  border-radius:15px;
+button:hover{ background: darkblue; }
+
+#qrcode{ margin-top:20px; }
+
+table{
+  width:100%;
+  border-collapse: collapse;
+  margin-top:20px;
+}
+
+table, th, td{
+  border:1px solid black;
+  padding:5px;
+}
+
+th{
+  background:#4facfe;
+  color:white;
 }
 </style>
 </head>
 
 <body>
+<div class="container">
+<h1>Smart Event Management Portal</h1>
 
-<h1>AI Workshop 2026</h1>
+<!-- Event Announcement -->
+<div class="event-box">
+<h2>AI Workshop 2026</h2>
+<p><b>Date:</b> March 10, 2026</p>
+<p><b>Venue:</b> Seminar Hall</p>
 
-<!-- Registration Section -->
-<div class="box" id="registrationSection">
-  <h3>Student Registration</h3>
-  <input type="text" id="studentName" placeholder="Enter Name">
-  <input type="text" id="studentID" placeholder="Enter ID">
-  <br>
-  <button onclick="register()">Register</button>
-  <p id="regMsg"></p>
+<button onclick="generateQR()">Generate Registration QR</button>
+<div id="qrcode"></div>
 </div>
 
-<!-- Attendance Section -->
-<div id="attendanceSection">
-  <h2>Attendance</h2>
-  <p id="attendanceMsg"></p>
-  <button onclick="generateCertificate()">Generate Certificate</button>
+<!-- Registration -->
+<div class="registration-box">
+<h3>Student Registration</h3>
+<input type="text" id="studentName" placeholder="Enter Name">
+<input type="text" id="studentID" placeholder="Enter ID">
+<br>
+<button onclick="registerStudent()">Register</button>
+<p id="regMsg"></p>
 </div>
 
-<!-- Certificate Section -->
-<div id="certificateSection">
-  <h1>Certificate of Participation</h1>
-  <p>This is to certify that</p>
-  <h2 id="certName"></h2>
-  <p>has successfully attended</p>
-  <h3>AI Workshop 2026</h3>
-  <p>Date: March 10, 2026</p>
-  <br>
-  <button onclick="window.print()">Download / Print</button>
+<!-- Attendance -->
+<div class="attendance-box">
+<h3>Attendance</h3>
+<button onclick="markAttendance()">Mark Attendance</button>
+<p id="attendanceMsg"></p>
+</div>
+
+<!-- Certificate -->
+<div class="certificate-box" style="display:none;">
+<h3>Certificate</h3>
+<h2 id="certName"></h2>
+<p>has attended AI Workshop 2026</p>
+<button onclick="window.print()">Print / Download</button>
+</div>
+
+<!-- Stored Data -->
+<div class="data-box">
+<h3>Registered & Attended Students</h3>
+<table id="studentTable">
+<tr><th>Name</th><th>ID</th><th>Status</th><th>Time</th></tr>
+</table>
+</div>
+
 </div>
 
 <script>
+/* Generate QR Code */
+function generateQR(){
+  const qrDiv = document.getElementById("qrcode");
+  qrDiv.innerHTML="";
+  const url = window.location.href; // could point to registration
+  QRCode.toCanvas(url,{width:200},function(error,canvas){
+    if(error) console.error(error);
+    qrDiv.appendChild(canvas);
+  });
+}
 
-let savedName = "";
-
-function register(){
-
+/* Register Student */
+function registerStudent(){
   const name = document.getElementById("studentName").value;
   const id = document.getElementById("studentID").value;
 
-  if(name=="" || id==""){
-    alert("Fill all details");
+  if(!name || !id){ alert("Fill all details"); return; }
+
+  const students = JSON.parse(localStorage.getItem("students")||"[]");
+
+  // Check duplicate
+  if(students.some(s=>s.id===id)){
+    alert("ID already registered!");
     return;
   }
 
-  savedName = name;
+  students.push({name:name,id:id,status:"Registered",time:"-"});
+  localStorage.setItem("students",JSON.stringify(students));
+  document.getElementById("regMsg").innerHTML="Registered Successfully ✅";
 
-  document.getElementById("regMsg").innerHTML =
-  "Registration Successful ✅";
+  // Refresh table
+  showStudentData();
+}
 
-  // Hide registration
-  document.getElementById("registrationSection").style.display="none";
+/* Mark Attendance */
+function markAttendance(){
+  const name = document.getElementById("studentName").value;
+  const id = document.getElementById("studentID").value;
 
-  // Show attendance
-  document.getElementById("attendanceSection").style.display="block";
+  if(!name || !id){ alert("Enter name & ID to mark attendance"); return; }
+
+  const students = JSON.parse(localStorage.getItem("students")||"[]");
+  const student = students.find(s=>s.id===id);
+
+  if(!student){
+    alert("Student not registered!");
+    return;
+  }
+
+  if(student.status==="Present"){ alert("Attendance already marked"); return; }
 
   const time = new Date().toLocaleString();
+  student.status="Present";
+  student.time=time;
 
-  document.getElementById("attendanceMsg").innerHTML =
-  "Name: "+name+"<br>ID: "+id+
-  "<br><br>Attendance Marked ✅<br>Time: "+time;
+  localStorage.setItem("students",JSON.stringify(students));
+
+  document.getElementById("attendanceMsg").innerHTML="Attendance Marked ✅<br>Time: "+time;
+
+  // Show certificate
+  document.getElementById("certificateBox").style.display="block";
+  document.getElementById("certName").innerText=name;
+
+  // Refresh table
+  showStudentData();
 }
 
-function generateCertificate(){
-
-  document.getElementById("attendanceSection").style.display="none";
-
-  document.getElementById("certificateSection").style.display="block";
-
-  document.getElementById("certName").innerText = savedName;
+/* Show Data */
+function showStudentData(){
+  const table = document.getElementById("studentTable");
+  table.innerHTML="<tr><th>Name</th><th>ID</th><th>Status</th><th>Time</th></tr>";
+  const students = JSON.parse(localStorage.getItem("students")||"[]");
+  students.forEach(s=>{
+    const row = table.insertRow();
+    row.insertCell(0).innerText=s.name;
+    row.insertCell(1).innerText=s.id;
+    row.insertCell(2).innerText=s.status;
+    row.insertCell(3).innerText=s.time;
+  });
 }
 
+// Initial table load
+showStudentData();
 </script>
-
 </body>
 </html>
