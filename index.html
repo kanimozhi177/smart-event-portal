@@ -10,7 +10,6 @@ body {
   font-family: Arial;
   text-align: center;
   background: linear-gradient(to right, #4facfe, #00f2fe);
-  color: black;
 }
 
 .event-box {
@@ -19,7 +18,6 @@ body {
   margin: 40px auto;
   width: 350px;
   border-radius: 15px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
 input {
@@ -37,12 +35,12 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background: darkblue;
-}
-
-#qrcode {
-  margin-top: 20px;
+#certificate {
+  display:none;
+  background:white;
+  margin:40px;
+  padding:40px;
+  border:8px solid black;
 }
 </style>
 </head>
@@ -53,16 +51,8 @@ button:hover {
 
 <div class="event-box">
   <h2>AI Workshop 2026</h2>
-  <p><b>Date:</b> March 10, 2026</p>
-  <p><b>Venue:</b> Seminar Hall</p>
 
-  <!-- Student Name Input -->
   <input type="text" id="studentName" placeholder="Enter Student Name">
-
-  <br>
-
-  <button onclick="generateQR()">Generate Registration QR</button>
-  <div id="qrcode"></div>
 
   <br>
 
@@ -71,19 +61,19 @@ button:hover {
   <p id="attendanceMsg"></p>
 </div>
 
+<!-- Certificate Section -->
+<div id="certificate">
+  <h1>Certificate of Participation</h1>
+  <p>This is to certify that</p>
+  <h2 id="certName"></h2>
+  <p>has successfully attended</p>
+  <h3>AI Workshop 2026</h3>
+  <p>Date: March 10, 2026</p>
+  <br>
+  <button onclick="window.print()">Download / Print</button>
+</div>
+
 <script>
-
-function generateQR() {
-  const qrDiv = document.getElementById("qrcode");
-  qrDiv.innerHTML = "";
-
-  QRCode.toCanvas("https://forms.gle/uGW78qo9YdVw8q589", 
-  { width: 200 }, 
-  function (error, canvas) {
-    if (error) console.error(error);
-    qrDiv.appendChild(canvas);
-  });
-}
 
 function markAttendance() {
 
@@ -99,47 +89,10 @@ function markAttendance() {
   document.getElementById("attendanceMsg").innerHTML =
     "Attendance Marked Successfully ✅ <br> Time: " + today;
 
-  setTimeout(function(){
-    generateCertificate(name);
-  },1000);
-}
+  // Show certificate
+  document.getElementById("certificate").style.display = "block";
+  document.getElementById("certName").innerText = name;
 
-function generateCertificate(name){
-
-  const win = window.open("");
-
-  win.document.write(`
-    <html>
-    <head>
-      <title>Certificate</title>
-      <style>
-        body{
-          text-align:center;
-          font-family:Arial;
-          border:10px solid #000;
-          margin:50px;
-          padding:50px;
-        }
-        h1{ font-size:40px; }
-        h2{ color:blue; }
-        button{
-          padding:10px 20px;
-          margin-top:20px;
-        }
-      </style>
-    </head>
-    <body>
-      <h1>Certificate of Participation</h1>
-      <p>This is to certify that</p>
-      <h2>${name}</h2>
-      <p>has successfully attended</p>
-      <h3>AI Workshop 2026</h3>
-      <p>Date: March 10, 2026</p>
-      <br>
-      <button onclick="window.print()">Download / Print</button>
-    </body>
-    </html>
-  `);
 }
 
 </script>
