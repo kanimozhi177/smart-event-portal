@@ -22,6 +22,12 @@ body {
   box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
+input {
+  width: 90%;
+  padding: 8px;
+  margin: 8px;
+}
+
 button {
   padding: 10px 20px;
   background: blue;
@@ -50,39 +56,92 @@ button:hover {
   <p><b>Date:</b> March 10, 2026</p>
   <p><b>Venue:</b> Seminar Hall</p>
 
-  <a href="https://forms.gle/uGW78qo9YdVw8q589" target="_blank">
-    <button>Register Now</button>
-  </a>
+  <!-- Student Name Input -->
+  <input type="text" id="studentName" placeholder="Enter Student Name">
 
-  <br><br>
+  <br>
 
   <button onclick="generateQR()">Generate Registration QR</button>
-
   <div id="qrcode"></div>
 
   <br>
 
-  <button onclick="markAttendance()">Mark Attendance</button>
+  <button onclick="markAttendance()">Mark Attendance & Get Certificate</button>
 
   <p id="attendanceMsg"></p>
 </div>
 
 <script>
+
 function generateQR() {
   const qrDiv = document.getElementById("qrcode");
   qrDiv.innerHTML = "";
 
-  QRCode.toCanvas("https://forms.gle/uGW78qo9YdVw8q589", { width: 200 }, function (error, canvas) {
+  QRCode.toCanvas("https://forms.gle/uGW78qo9YdVw8q589", 
+  { width: 200 }, 
+  function (error, canvas) {
     if (error) console.error(error);
     qrDiv.appendChild(canvas);
   });
 }
 
 function markAttendance() {
+
+  const name = document.getElementById("studentName").value;
+
+  if(name.trim() === ""){
+    alert("Please Enter Student Name");
+    return;
+  }
+
   const today = new Date().toLocaleString();
+
   document.getElementById("attendanceMsg").innerHTML =
     "Attendance Marked Successfully ✅ <br> Time: " + today;
+
+  setTimeout(function(){
+    generateCertificate(name);
+  },1000);
 }
+
+function generateCertificate(name){
+
+  const win = window.open("");
+
+  win.document.write(`
+    <html>
+    <head>
+      <title>Certificate</title>
+      <style>
+        body{
+          text-align:center;
+          font-family:Arial;
+          border:10px solid #000;
+          margin:50px;
+          padding:50px;
+        }
+        h1{ font-size:40px; }
+        h2{ color:blue; }
+        button{
+          padding:10px 20px;
+          margin-top:20px;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Certificate of Participation</h1>
+      <p>This is to certify that</p>
+      <h2>${name}</h2>
+      <p>has successfully attended</p>
+      <h3>AI Workshop 2026</h3>
+      <p>Date: March 10, 2026</p>
+      <br>
+      <button onclick="window.print()">Download / Print</button>
+    </body>
+    </html>
+  `);
+}
+
 </script>
 
 </body>
