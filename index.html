@@ -1,203 +1,225 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>College Smart Event Portal</title>
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-<style>
-/* Body */
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  text-align: center;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: #333;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Event Portal | AI Workshop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <style>
+        :root {
+            --primary: #4e54c8;
+            --secondary: #764ba2;
+            --success: #00b894;
+            --bg: #f0f2f5;
+        }
 
-/* Event box */
-.event-box {
-  background: rgba(255, 255, 255, 0.95);
-  padding: 25px;
-  margin: 40px auto;
-  width: 380px;
-  border-radius: 15px;
-  box-shadow: 0 12px 25px rgba(0,0,0,0.25);
-  transition: transform 0.3s;
-}
-.event-box:hover {
-  transform: translateY(-5px);
-}
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #2d3436;
+        }
 
-/* Registration / Attendance / Certificate boxes */
-.registration-box, .attendance-box, .certificate-box {
-  background: rgba(255,255,255,0.95);
-  padding: 25px;
-  margin: 30px auto;
-  width: 380px;
-  border-radius: 15px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-  transition: transform 0.3s;
-}
-.registration-box:hover, .attendance-box:hover, .certificate-box:hover {
-  transform: translateY(-3px);
-}
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            text-align: center;
+        }
 
-/* Inputs */
-input, select {
-  width: 80%;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-}
+        .event-header {
+            margin-bottom: 25px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+        }
 
-/* Buttons */
-button {
-  padding: 12px 25px;
-  background: #667eea;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background 0.3s, transform 0.2s;
-}
-button:hover {
-  background: #764ba2;
-  transform: scale(1.05);
-}
+        .event-header h1 { margin: 0; font-size: 24px; color: var(--primary); }
+        .event-header p { margin: 5px 0; font-size: 14px; color: #666; }
 
-/* QR and certificate spacing */
-#qrcode {
-  margin-top: 20px;
-}
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            background: #eee;
+            border-radius: 10px;
+            padding: 5px;
+        }
 
-#certificate {
-  display: none;
-  border: 5px solid #667eea;
-  text-align: center;
-}
-</style>
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #777;
+            transition: 0.3s;
+            border-radius: 8px;
+        }
+
+        .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        /* Sections */
+        .content-section { display: none; animation: fadeIn 0.4s ease; }
+        .active-section { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Inputs & Buttons */
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        input:focus { border-color: var(--primary); }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover { background: var(--secondary); transform: translateY(-2px); }
+
+        /* QR and Certificate Display */
+        #qrCanvas { margin: 20px auto; border: 5px solid #fff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        .certificate-preview {
+            border: 5px double var(--primary);
+            padding: 20px;
+            background: #fff;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
 
-<h1 style="color:white; text-shadow: 2px 2px 5px rgba(0,0,0,0.3);">College Smart Event Portal</h1>
+<div class="main-container">
+    <div class="event-header">
+        <h1>AI Workshop 2026</h1>
+        <p>📍 Seminar Hall | 📅 March 10, 2026</p>
+    </div>
 
-<div class="event-box">
-  <h2>AI Workshop 2026</h2>
-  <p><b>Date:</b> March 10, 2026</p>
-  <p><b>Venue:</b> Seminar Hall</p>
-</div>
+    <div class="tabs">
+        <button class="tab-btn active" id="tab1" onclick="switchTab(1)">Register</button>
+        <button class="tab-btn" id="tab2" onclick="switchTab(2)">Pass</button>
+        <button class="tab-btn" id="tab3" onclick="switchTab(3)">Certificate</button>
+    </div>
 
-<!-- Registration Form -->
-<div class="registration-box">
-  <h3>Student Registration</h3>
-  <input type="text" id="studentName" placeholder="Enter Name"><br>
-  <input type="text" id="studentID" placeholder="Enter ID"><br>
-  <input type="text" id="studentDept" placeholder="Enter Department"><br>
-  <select id="studentYear">
-    <option value="">Select Year</option>
-    <option value="1st Year">1st Year</option>
-    <option value="2nd Year">2nd Year</option>
-    <option value="3rd Year">3rd Year</option>
-    <option value="4th Year">4th Year</option>
-  </select><br>
-  <button onclick="registerStudent()">Register</button>
-  <p id="regMsg"></p>
-</div>
+    <div id="section1" class="content-section active-section">
+        <h3>Student Details</h3>
+        <input type="text" id="name" placeholder="Full Name">
+        <input type="text" id="id" placeholder="Roll Number / Student ID">
+        <input type="text" id="dept" placeholder="Department (e.g. CSE)">
+        <select id="year">
+            <option value="">Academic Year</option>
+            <option>1st Year</option><option>2nd Year</option>
+            <option>3rd Year</option><option>4th Year</option>
+        </select>
+        <button class="btn-primary" onclick="handleRegister()">Submit Registration</button>
+    </div>
 
-<!-- QR Attendance -->
-<div class="attendance-box" style="display:none;">
-  <h3>Your Attendance QR</h3>
-  <div id="qrcode"></div>
-  <br>
-  <button onclick="scanQR()">Scan QR & Mark Attendance</button>
-  <p id="attendanceMsg"></p>
-</div>
+    <div id="section2" class="content-section">
+        <h3>Digital Entry Pass</h3>
+        <p style="font-size: 13px; color: #666;">Show this QR at the venue entrance.</p>
+        <canvas id="qrCanvas"></canvas>
+        <div id="passDetails"></div>
+        <button class="btn-primary" style="background: var(--success);" onclick="markAttendance()">Verify My Attendance</button>
+        <p id="attStatus" style="font-weight: 600;"></p>
+    </div>
 
-<!-- Certificate -->
-<div id="certificate" class="certificate-box">
-  <h2>Certificate of Participation</h2>
-  <p>This is to certify that</p>
-  <h3 id="certName"></h3>
-  <p id="certDeptYear"></p>
-  <p>has successfully attended AI Workshop 2026</p>
-  <p>Date: March 10, 2026</p>
-  <button onclick="window.print()">Print / Download</button>
+    <div id="section3" class="content-section">
+        <h3>E-Certificate</h3>
+        <div id="certArea" class="certificate-preview">
+            <h4 style="margin:0; font-size: 14px; letter-spacing: 1px;">CERTIFICATE OF PARTICIPATION</h4>
+            <p style="font-size: 10px;">Presented to</p>
+            <h2 id="certName" style="color: var(--secondary); margin: 5px 0;">Student Name</h2>
+            <p style="font-size: 10px;">for successfully attending the AI Workshop 2026</p>
+        </div>
+        <button class="btn-primary" onclick="window.print()">Download / Print PDF</button>
+    </div>
 </div>
 
 <script>
-let currentStudent = null;
+    let studentData = null;
+    let attendanceMarked = false;
 
-function registerStudent(){
-  const name = document.getElementById("studentName").value.trim();
-  const id = document.getElementById("studentID").value.trim();
-  const dept = document.getElementById("studentDept").value.trim();
-  const year = document.getElementById("studentYear").value;
+    function switchTab(n) {
+        if(n > 1 && !studentData) {
+            alert("Mundhadi Register pannunga!");
+            return;
+        }
+        if(n === 3 && !attendanceMarked) {
+            alert("Attendance verify panna munnadi certificate eduka mudiyaadhu!");
+            return;
+        }
 
-  if(!name || !id || !dept || !year){
-    alert("Please fill all fields!");
-    return;
-  }
+        // UI switch logic
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        
+        document.getElementById('section' + n).classList.add('active-section');
+        document.getElementById('tab' + n).classList.add('active');
+    }
 
-  let students = JSON.parse(localStorage.getItem("students") || "[]");
+    function handleRegister() {
+        const name = document.getElementById('name').value;
+        const id = document.getElementById('id').value;
+        const dept = document.getElementById('dept').value;
+        const year = document.getElementById('year').value;
 
-  if(students.some(s => s.id === id)){
-    alert("This ID is already registered!");
-    return;
-  }
+        if(!name || !id || !dept || !year) {
+            alert("Ella field-aiyum fill pannunga!");
+            return;
+        }
 
-  currentStudent = {name:name, id:id, department:dept, year:year, status:"Registered"};
-  students.push(currentStudent);
-  localStorage.setItem("students", JSON.stringify(students));
+        studentData = { name, id, dept, year };
+        
+        // Generate QR for Tab 2
+        QRCode.toCanvas(document.getElementById('qrCanvas'), `ENTRY_ID:${id}`, {
+            width: 180,
+            color: { dark: "#4e54c8", light: "#ffffff" }
+        });
 
-  document.getElementById("regMsg").innerHTML = "Registration Successful ✅";
+        document.getElementById('passDetails').innerHTML = `<b>${name}</b><br>${id} | ${dept}`;
+        switchTab(2);
+    }
 
-  // Show attendance and generate QR
-  document.querySelector(".registration-box").style.display = "none";
-  document.querySelector(".attendance-box").style.display = "block";
-  generateQR(currentStudent.id);
-}
-
-// Generate QR for attendance
-function generateQR(studentID){
-  const qrDiv = document.getElementById("qrcode");
-  qrDiv.innerHTML = "";
-  QRCode.toCanvas(studentID, {width:200}, function(error, canvas){
-    if(error) console.error(error);
-    qrDiv.appendChild(canvas);
-  });
-}
-
-// Scan QR and mark attendance
-function scanQR(){
-  if(!currentStudent){
-    alert("No student registered!");
-    return;
-  }
-
-  let students = JSON.parse(localStorage.getItem("students") || "[]");
-  const student = students.find(s => s.id === currentStudent.id);
-
-  if(student.status === "Present"){
-    alert("Attendance already marked!");
-    return;
-  }
-
-  const time = new Date().toLocaleString();
-  student.status = "Present";
-  student.time = time;
-  localStorage.setItem("students", JSON.stringify(students));
-
-  document.getElementById("attendanceMsg").innerHTML = "Attendance Marked ✅<br>Time: "+time;
-
-  // Show certificate
-  document.getElementById("certificate").style.display = "block";
-  document.getElementById("certName").innerText = student.name;
-  document.getElementById("certDeptYear").innerText = student.department + " | " + student.year;
-}
+    function markAttendance() {
+        attendanceMarked = true;
+        document.getElementById('attStatus').innerHTML = "Attendance Verified ✅";
+        document.getElementById('attStatus').style.color = "var(--success)";
+        
+        // Prepare Certificate
+        document.getElementById('certName').innerText = studentData.name.toUpperCase();
+        
+        setTimeout(() => {
+            alert("Attendance marked! Ippo neenga certificate download pannalaam.");
+            switchTab(3);
+        }, 1000);
+    }
 </script>
+
 </body>
 </html>
