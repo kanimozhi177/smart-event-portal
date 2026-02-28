@@ -1,34 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Smart Event Attendance QR</title>
+<title>College Smart Event Portal</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 <style>
-body{ font-family: Arial; text-align:center; background:linear-gradient(to right,#4facfe,#00f2fe); color:black; }
-.event-box{ background:white; padding:25px; margin:40px auto; width:350px; border-radius:15px; box-shadow:0 10px 20px rgba(0,0,0,0.2); }
-input{ width:80%; padding:8px; margin:8px 0;}
-button{ padding:10px 20px; background:blue; color:white; border:none; border-radius:5px; cursor:pointer;}
-button:hover{ background:darkblue;}
-#certificate{ display:none; background:white; padding:25px; margin:30px auto; width:400px; border-radius:15px; border:5px solid black;}
-#qrcode{ margin-top:20px; }
+body {
+  font-family: Arial;
+  text-align: center;
+  background: linear-gradient(to right, #4facfe, #00f2fe);
+  color: black;
+}
+
+.event-box, .registration-box, .attendance-box, .certificate-box {
+  background: white;
+  padding: 25px;
+  margin: 40px auto;
+  width: 350px;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+input{
+  width: 80%;
+  padding: 8px;
+  margin: 8px 0;
+}
+
+button {
+  padding: 10px 20px;
+  background: blue;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: darkblue;
+}
+
+#qrcode {
+  margin-top: 20px;
+}
+
+#certificate {
+  display: none;
+  background: white;
+  padding: 25px;
+  margin: 30px auto;
+  width: 400px;
+  border-radius: 15px;
+  border: 5px solid black;
+}
 </style>
 </head>
 <body>
 
-<h1>AI Workshop 2026</h1>
+<h1>College Smart Event Portal</h1>
 
 <div class="event-box">
-  <h3>Enter Your Name for QR Attendance</h3>
-  <input type="text" id="studentName" placeholder="Your Name"><br>
-  <button onclick="generateQR()">Generate Your QR</button>
-  <div id="qrcode"></div>
-  <br>
-  <button onclick="markAttendance()">Scan QR & Mark Attendance</button>
+  <h2>AI Workshop 2026</h2>
+  <p><b>Date:</b> March 10, 2026</p>
+  <p><b>Venue:</b> Seminar Hall</p>
+</div>
+
+<!-- Registration Form -->
+<div class="registration-box">
+  <h3>Student Registration</h3>
+  <input type="text" id="studentName" placeholder="Enter Name"><br>
+  <input type="text" id="studentID" placeholder="Enter ID"><br>
+  <button onclick="registerStudent()">Register</button>
+  <p id="regMsg"></p>
+</div>
+
+<!-- Attendance -->
+<div class="attendance-box" style="display:none;">
+  <h3>Attendance</h3>
+  <button onclick="markAttendance()">Mark Attendance & Generate Certificate</button>
   <p id="attendanceMsg"></p>
 </div>
 
 <!-- Certificate -->
-<div id="certificate">
+<div id="certificate" class="certificate-box">
   <h2>Certificate of Participation</h2>
   <p>This is to certify that</p>
   <h3 id="certName"></h3>
@@ -38,30 +91,60 @@ button:hover{ background:darkblue;}
 </div>
 
 <script>
-let studentData="";
-
-function generateQR(){
+// Store registered students in localStorage
+function registerStudent(){
   const name = document.getElementById("studentName").value.trim();
-  if(!name){ alert("Enter your name first!"); return; }
-  studentData = name; // store name to simulate QR scan
-  const qrDiv = document.getElementById("qrcode");
-  qrDiv.innerHTML="";
-  QRCode.toCanvas(name, {width:200}, function(error, canvas){
-    if(error) console.error(error);
-    qrDiv.appendChild(canvas);
-  });
-}
+  const id = document.getElementById("studentID").value.trim();
 
-function markAttendance(){
-  if(!studentData){
-    alert("Please generate your QR first!");
+  if(!name || !id){
+    alert("Please fill all fields!");
     return;
   }
-  const today = new Date().toLocaleString();
-  document.getElementById("attendanceMsg").innerHTML = "Attendance Marked ✅ <br> Time: " + today;
 
+  let students = JSON.parse(localStorage.getItem("students") || "[]");
+
+  if(students.some(s => s.id === id)){
+    alert("This ID is already registered!");
+    return;
+  }
+
+  students.push({name: name, id: id, status: "Registered"});
+  localStorage.setItem("students", JSON.stringify(students));
+
+  document.getElementById("regMsg").innerHTML = "Registration Successful ✅";
+
+  // Hide registration, show attendance
+  document.querySelector(".registration-box").style.display = "none";
+  document.querySelector(".attendance-box").style.display = "block";
+}
+
+// Mark attendance and generate certificate
+function markAttendance(){
+  const name = document.getElementById("studentName").value.trim();
+  const id = document.getElementById("studentID").value.trim();
+
+  let students = JSON.parse(localStorage.getItem("students") || "[]");
+  const student = students.find(s => s.id === id);
+  if(!student){
+    alert("Student not registered!");
+    return;
+  }
+
+  if(student.status === "Present"){
+    alert("Attendance already marked!");
+    return;
+  }
+
+  const time = new Date().toLocaleString();
+  student.status = "Present";
+  student.time = time;
+  localStorage.setItem("students", JSON.stringify(students));
+
+  document.getElementById("attendanceMsg").innerHTML = "Attendance Marked ✅<br>Time: "+time;
+
+  // Show certificate
   document.getElementById("certificate").style.display = "block";
-  document.getElementById("certName").innerText = studentData;
+  document.getElementById("certName").innerText = student.name;
 }
 </script>
 
