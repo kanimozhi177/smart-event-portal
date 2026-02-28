@@ -3,8 +3,6 @@
 <head>
 <title>College Smart Event Portal</title>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-
 <style>
 body{
   font-family: Arial;
@@ -12,12 +10,18 @@ body{
   background: linear-gradient(to right,#4facfe,#00f2fe);
 }
 
-.event-box{
+.box{
   background:white;
   padding:25px;
-  margin:40px auto;
+  margin:60px auto;
   width:350px;
   border-radius:15px;
+}
+
+input{
+  width:90%;
+  padding:8px;
+  margin:5px;
 }
 
 button{
@@ -33,28 +37,41 @@ button{
 
 <body>
 
-<h1>College Smart Event Portal</h1>
+<h1>AI Workshop 2026</h1>
 
-<div class="event-box">
-<h2>AI Workshop 2026</h2>
-<p>Date: March 10, 2026</p>
-<p>Venue: Seminar Hall</p>
+<div class="box">
+<h3>Register Here</h3>
 
-<button onclick="generateQR()">Generate QR</button>
-<div id="qrcode"></div>
+<input type="text" id="name" placeholder="Enter Name" required><br>
+<input type="text" id="id" placeholder="Enter ID" required><br><br>
+
+<button onclick="register()">Register</button>
+
+<p id="msg"></p>
 
 </div>
 
 <script>
-function generateQR(){
-  const qrDiv = document.getElementById("qrcode");
-  qrDiv.innerHTML="";
+function register(){
 
-  const url = "attendance.html?name=Student&id=101";
+  const name = document.getElementById("name").value;
+  const id = document.getElementById("id").value;
 
-  QRCode.toCanvas(url,{width:200},function(error,canvas){
-    qrDiv.appendChild(canvas);
-  });
+  if(name=="" || id==""){
+    alert("Fill all details");
+    return;
+  }
+
+  // Save in localStorage
+  localStorage.setItem("studentName",name);
+  localStorage.setItem("studentID",id);
+
+  document.getElementById("msg").innerHTML="Registration Successful ✅";
+
+  // Go to attendance page
+  setTimeout(()=>{
+    window.location="attendance.html";
+  },1500);
 }
 </script>
 
