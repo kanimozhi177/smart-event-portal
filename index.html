@@ -2,7 +2,9 @@
 <html>
 <head>
 <title>College Smart Event Portal</title>
+
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
 <style>
 body {
   font-family: Arial;
@@ -29,18 +31,12 @@ button {
   cursor: pointer;
 }
 
-button:hover { background: darkblue; }
+button:hover {
+  background: darkblue;
+}
 
-#qrcode { margin-top: 20px; }
-
-#certificate { 
-  display:none; 
-  background:white; 
-  padding:25px; 
-  margin:30px auto; 
-  width:400px; 
-  border-radius:15px;
-  border:5px solid black;
+#qrcode {
+  margin-top: 20px;
 }
 </style>
 </head>
@@ -54,50 +50,38 @@ button:hover { background: darkblue; }
   <p><b>Date:</b> March 10, 2026</p>
   <p><b>Venue:</b> Seminar Hall</p>
 
-  <button onclick="generateQR()">Generate Registration QR</button>
-  <div id="qrcode"></div>
+  <a href="https://forms.gle/uGW78qo9YdVw8q589" target="_blank">
+    <button>Register Now</button>
+  </a>
 
   <br><br>
 
+  <button onclick="generateQR()">Generate Registration QR</button>
+
+  <div id="qrcode"></div>
+
+  <br>
+
   <button onclick="markAttendance()">Mark Attendance</button>
+
   <p id="attendanceMsg"></p>
 </div>
 
-<!-- Certificate -->
-<div id="certificate">
-  <h2>Certificate of Participation</h2>
-  <p>This is to certify that</p>
-  <h3 id="certName"></h3>
-  <p>has successfully attended AI Workshop 2026</p>
-  <p>Date: March 10, 2026</p>
-  <button onclick="window.print()">Print / Download</button>
-</div>
-
 <script>
-function generateQR(){
+function generateQR() {
   const qrDiv = document.getElementById("qrcode");
-  qrDiv.innerHTML="";
-  const url = window.location.href; // registration page link
-  QRCode.toCanvas(url, {width:200}, function(error, canvas){
-    if(error) console.error(error);
+  qrDiv.innerHTML = "";
+
+  QRCode.toCanvas("https://forms.gle/uGW78qo9YdVw8q589", { width: 200 }, function (error, canvas) {
+    if (error) console.error(error);
     qrDiv.appendChild(canvas);
   });
 }
 
-function markAttendance(){
+function markAttendance() {
   const today = new Date().toLocaleString();
-  document.getElementById("attendanceMsg").innerHTML=
+  document.getElementById("attendanceMsg").innerHTML =
     "Attendance Marked Successfully ✅ <br> Time: " + today;
-
-  // Ask name for certificate
-  const name = prompt("Enter your name for the certificate:");
-  if(!name || name.trim()===""){
-    alert("Name is required for certificate!");
-    return;
-  }
-
-  document.getElementById("certificate").style.display="block";
-  document.getElementById("certName").innerText=name;
 }
 </script>
 
