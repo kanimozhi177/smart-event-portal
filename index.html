@@ -2,51 +2,20 @@
 <html>
 <head>
 <title>College Smart Event Portal</title>
-
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-
 <style>
-body {
-  font-family: Arial;
-  text-align: center;
-  background: linear-gradient(to right, #4facfe, #00f2fe);
-  color: black;
-}
+body { font-family: Arial; text-align: center; background: linear-gradient(to right, #4facfe, #00f2fe); color: black; }
 
-.event-box {
-  background: white;
-  padding: 25px;
-  margin: 40px auto;
-  width: 350px;
-  border-radius: 15px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-}
+.event-box { background: white; padding: 25px; margin: 40px auto; width: 350px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
 
-button {
-  padding: 10px 20px;
-  background: blue;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
+button { padding: 10px 20px; background: blue; color: white; border: none; border-radius: 5px; cursor: pointer; }
 button:hover { background: darkblue; }
 
 #qrcode { margin-top: 20px; }
 
-#certificate {
-  display: none;
-  background: white;
-  padding: 25px;
-  margin: 30px auto;
-  width: 400px;
-  border-radius: 15px;
-  border: 5px solid black;
-}
+#certificate { display: none; background: white; padding: 25px; margin: 30px auto; width: 400px; border-radius: 15px; border: 5px solid black; }
 </style>
 </head>
-
 <body>
 
 <h1>College Smart Event Portal</h1>
@@ -56,18 +25,12 @@ button:hover { background: darkblue; }
   <p><b>Date:</b> March 10, 2026</p>
   <p><b>Venue:</b> Seminar Hall</p>
 
-  <a href="https://forms.gle/uGW78qo9YdVw8q589" target="_blank">
-    <button>Register Now</button>
-  </a>
-
-  <br><br>
-
   <button onclick="generateQR()">Generate Registration QR</button>
   <div id="qrcode"></div>
 
-  <br>
+  <br><br>
 
-  <button onclick="markAttendance()">Mark Attendance & Generate Certificate</button>
+  <button onclick="registerAndGenerateCertificate()">Register & Generate Certificate</button>
   <p id="attendanceMsg"></p>
 </div>
 
@@ -82,27 +45,25 @@ button:hover { background: darkblue; }
 </div>
 
 <script>
+// Generate QR for registration link
 function generateQR() {
   const qrDiv = document.getElementById("qrcode");
   qrDiv.innerHTML = "";
-  QRCode.toCanvas("https://forms.gle/uGW78qo9YdVw8q589", { width: 200 }, function (error, canvas) {
+  const url = window.location.href; // Registration page link
+  QRCode.toCanvas(url, { width: 200 }, function(error, canvas) {
     if (error) console.error(error);
     qrDiv.appendChild(canvas);
   });
 }
 
-function markAttendance() {
+// Register via QR + generate certificate automatically
+function registerAndGenerateCertificate() {
   const today = new Date().toLocaleString();
   document.getElementById("attendanceMsg").innerHTML =
     "Attendance Marked Successfully ✅ <br> Time: " + today;
 
-  // Ask for student name to generate certificate
-  const name = prompt("Enter your name for the certificate:");
-  if(!name || name.trim() === "") {
-    alert("Name is required for certificate!");
-    return;
-  }
-
+  // Simulate student name from QR registration
+  const name = "Registered Student"; // You can later replace with actual QR data
   document.getElementById("certificate").style.display = "block";
   document.getElementById("certName").innerText = name;
 }
