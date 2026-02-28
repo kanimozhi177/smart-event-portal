@@ -3,66 +3,71 @@
 <head>
 <title>College Smart Event Portal</title>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-
 <style>
-body {
+body{
   font-family: Arial;
-  text-align: center;
-  background: linear-gradient(to right, #4facfe, #00f2fe);
+  text-align:center;
+  background: linear-gradient(to right,#4facfe,#00f2fe);
 }
 
-.event-box {
-  background: white;
-  padding: 25px;
-  margin: 40px auto;
-  width: 350px;
-  border-radius: 15px;
+.box{
+  background:white;
+  padding:25px;
+  margin:60px auto;
+  width:350px;
+  border-radius:15px;
 }
 
-input {
-  width: 90%;
-  padding: 8px;
-  margin: 8px;
+input{
+  width:90%;
+  padding:8px;
+  margin:8px;
 }
 
-button {
-  padding: 10px 20px;
-  background: blue;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+button{
+  padding:10px 20px;
+  background:blue;
+  color:white;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
 }
 
-#certificate {
+#attendanceSection,
+#certificateSection{
   display:none;
   background:white;
-  margin:40px;
-  padding:40px;
-  border:8px solid black;
+  margin:40px auto;
+  padding:30px;
+  width:500px;
+  border-radius:15px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>College Smart Event Portal</h1>
+<h1>AI Workshop 2026</h1>
 
-<div class="event-box">
-  <h2>AI Workshop 2026</h2>
-
-  <input type="text" id="studentName" placeholder="Enter Student Name">
-
+<!-- Registration Section -->
+<div class="box" id="registrationSection">
+  <h3>Student Registration</h3>
+  <input type="text" id="studentName" placeholder="Enter Name">
+  <input type="text" id="studentID" placeholder="Enter ID">
   <br>
+  <button onclick="register()">Register</button>
+  <p id="regMsg"></p>
+</div>
 
-  <button onclick="markAttendance()">Mark Attendance & Get Certificate</button>
-
+<!-- Attendance Section -->
+<div id="attendanceSection">
+  <h2>Attendance</h2>
   <p id="attendanceMsg"></p>
+  <button onclick="generateCertificate()">Generate Certificate</button>
 </div>
 
 <!-- Certificate Section -->
-<div id="certificate">
+<div id="certificateSection">
   <h1>Certificate of Participation</h1>
   <p>This is to certify that</p>
   <h2 id="certName"></h2>
@@ -75,24 +80,43 @@ button {
 
 <script>
 
-function markAttendance() {
+let savedName = "";
+
+function register(){
 
   const name = document.getElementById("studentName").value;
+  const id = document.getElementById("studentID").value;
 
-  if(name.trim() === ""){
-    alert("Please Enter Student Name");
+  if(name=="" || id==""){
+    alert("Fill all details");
     return;
   }
 
-  const today = new Date().toLocaleString();
+  savedName = name;
+
+  document.getElementById("regMsg").innerHTML =
+  "Registration Successful ✅";
+
+  // Hide registration
+  document.getElementById("registrationSection").style.display="none";
+
+  // Show attendance
+  document.getElementById("attendanceSection").style.display="block";
+
+  const time = new Date().toLocaleString();
 
   document.getElementById("attendanceMsg").innerHTML =
-    "Attendance Marked Successfully ✅ <br> Time: " + today;
+  "Name: "+name+"<br>ID: "+id+
+  "<br><br>Attendance Marked ✅<br>Time: "+time;
+}
 
-  // Show certificate
-  document.getElementById("certificate").style.display = "block";
-  document.getElementById("certName").innerText = name;
+function generateCertificate(){
 
+  document.getElementById("attendanceSection").style.display="none";
+
+  document.getElementById("certificateSection").style.display="block";
+
+  document.getElementById("certName").innerText = savedName;
 }
 
 </script>
