@@ -31,12 +31,18 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background: darkblue;
-}
+button:hover { background: darkblue; }
 
-#qrcode {
-  margin-top: 20px;
+#qrcode { margin-top: 20px; }
+
+#certificate {
+  display: none;
+  background: white;
+  padding: 25px;
+  margin: 30px auto;
+  width: 400px;
+  border-radius: 15px;
+  border: 5px solid black;
 }
 </style>
 </head>
@@ -57,21 +63,28 @@ button:hover {
   <br><br>
 
   <button onclick="generateQR()">Generate Registration QR</button>
-
   <div id="qrcode"></div>
 
   <br>
 
-  <button onclick="markAttendance()">Mark Attendance</button>
-
+  <button onclick="markAttendance()">Mark Attendance & Generate Certificate</button>
   <p id="attendanceMsg"></p>
+</div>
+
+<!-- Certificate -->
+<div id="certificate">
+  <h2>Certificate of Participation</h2>
+  <p>This is to certify that</p>
+  <h3 id="certName"></h3>
+  <p>has successfully attended AI Workshop 2026</p>
+  <p>Date: March 10, 2026</p>
+  <button onclick="window.print()">Print / Download</button>
 </div>
 
 <script>
 function generateQR() {
   const qrDiv = document.getElementById("qrcode");
   qrDiv.innerHTML = "";
-
   QRCode.toCanvas("https://forms.gle/uGW78qo9YdVw8q589", { width: 200 }, function (error, canvas) {
     if (error) console.error(error);
     qrDiv.appendChild(canvas);
@@ -82,6 +95,16 @@ function markAttendance() {
   const today = new Date().toLocaleString();
   document.getElementById("attendanceMsg").innerHTML =
     "Attendance Marked Successfully ✅ <br> Time: " + today;
+
+  // Ask for student name to generate certificate
+  const name = prompt("Enter your name for the certificate:");
+  if(!name || name.trim() === "") {
+    alert("Name is required for certificate!");
+    return;
+  }
+
+  document.getElementById("certificate").style.display = "block";
+  document.getElementById("certName").innerText = name;
 }
 </script>
 
