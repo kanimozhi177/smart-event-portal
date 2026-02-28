@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Attendance</title>
+
+<style>
+body{
+  text-align:center;
+  font-family:Arial;
+  background: linear-gradient(to right,#43e97b,#38f9d7);
+}
+
+.box{
+  background:white;
+  padding:30px;
+  margin:100px auto;
+  width:400px;
+  border-radius:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>Attendance Marked ✅</h2>
+<p id="info"></p>
+</div>
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+const name = params.get("name");
+const id = params.get("id");
+
+document.getElementById("info").innerHTML =
+"Name: " + name + "<br>ID: " + id + "<br><br>Certificate Generating...";
+
+setTimeout(generateCertificate,2000);
+
+function generateCertificate(){
+  const win = window.open("");
+
+  win.document.write(`
+    <html>
+    <head>
+    <title>Certificate</title>
+    </head>
+    <body style="text-align:center;font-family:Arial;margin-top:100px;">
+      <h1>Certificate of Participation</h1>
+      <p>This is to certify that</p>
+      <h2>${name}</h2>
+      <p>has successfully attended</p>
+      <h3>AI Workshop 2026</h3>
+      <p>Date: March 10, 2026</p>
+    </body>
+    </html>
+  `);
+}
+
+</script>
+
+</body>
+</html>
