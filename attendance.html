@@ -23,29 +23,33 @@ body{
 <body>
 
 <div class="box">
-<h2>Attendance Marked ✅</h2>
+<h2>Attendance</h2>
 <p id="info"></p>
 </div>
 
 <script>
 
-const params = new URLSearchParams(window.location.search);
-const name = params.get("name");
-const id = params.get("id");
+// Check if registered
+const name = localStorage.getItem("studentName");
+const id = localStorage.getItem("studentID");
 
-document.getElementById("info").innerHTML =
-"Name: " + name + "<br>ID: " + id + "<br><br>Certificate Generating...";
+if(!name || !id){
+  alert("Please Register First!");
+  window.location="index.html";
+}else{
 
-setTimeout(generateCertificate,2000);
+  document.getElementById("info").innerHTML=
+  "Name: "+name+"<br>ID: "+id+
+  "<br><br>Attendance Marked ✅<br><br>Generating Certificate...";
+
+  setTimeout(generateCertificate,2000);
+}
 
 function generateCertificate(){
   const win = window.open("");
 
   win.document.write(`
     <html>
-    <head>
-    <title>Certificate</title>
-    </head>
     <body style="text-align:center;font-family:Arial;margin-top:100px;">
       <h1>Certificate of Participation</h1>
       <p>This is to certify that</p>
@@ -57,7 +61,6 @@ function generateCertificate(){
     </html>
   `);
 }
-
 </script>
 
 </body>
